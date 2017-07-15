@@ -1,5 +1,12 @@
 #include "Step.h"
 
+/* Idea:
+ * Have some kind of Midi-note-manager system that Steps communicate with. When a step wants to play a note, it sends its data to the midi-note-manager which will store a copy of that note, with pitch, velocity and note length, and handle the playing
+ * and stopping of that note. This way Steps don't have to worry about calling NOTEOFF for every pitch they may have triggered, as it'll all be handled as a stack of immutable commands in a separate system. This will get rid of the
+ * previousNote hack.
+ */
+
+
 void midiNoteCommand(int command_, int pitch_, int velocity_) {
   Serial.write(command_);
   Serial.write(pitch_);
@@ -17,6 +24,7 @@ Step::Step(){
   length = 8; //4 == note length of 1 bar
   playing = false;
   playStartTime = 0;
+  previousNote = -1;
 }
 
 uint8_t Step::getNote() {
@@ -32,6 +40,7 @@ uint8_t Step::getLength() {
 }
 
 void Step::setNote(uint8_t note_) {
+  previousNote = note;
   note = note_;
 }
 
@@ -52,6 +61,10 @@ void Step::play(unsigned long currentTime_) {
 void Step::stop() {
   playing = false;
   midiNoteCommand(MIDI_NOTEOFF, note, 0);
+  if(previousNote != -1) {
+    midiNoteCommand(MIDI_NOTEOFF, previousNote, 0); //send a note-off command just in case the current note is playing..
+    previousNote = -1;
+  }
 }
 
 bool Step::isPlaying() {

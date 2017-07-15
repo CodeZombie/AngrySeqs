@@ -17,9 +17,11 @@ class Sequencer {
     uint16_t tempo;
     bool playing;
     float beatLength;
+    unsigned long beatCount;
     Pattern pattern[8];
     int8_t activePattern[8];
     unsigned long timeAccumulator;
+    unsigned long ppqnAccumulator;
   public:
     Sequencer(uint16_t tempo_);
     void setTempo(uint16_t tempo_);

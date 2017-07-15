@@ -5,7 +5,6 @@ Pattern::Pattern() {
   length = 8;
   swing = 0;
   currentStep = 0;
-  playing = false;
 }
 
 void Pattern::randomize() {
@@ -37,30 +36,23 @@ Step* Pattern::getStep(uint8_t stepID_) {
   return &step[stepID_];
 }
 
-bool Pattern::isPlaying() {
-  return playing;
+void Pattern::setStep(uint8_t step_) {
+  currentStep = step_;
 }
 
 void Pattern::reset() {
   currentStep = 0;
 }
 
-void Pattern::play() {
-  playing = true;
-}
-
 void Pattern::stop() {
-  playing = false;
   for(uint8_t i; i < length; i++) {
     step[i].stop(); //stop playing every note.
   }
 }
 
 void Pattern::update(unsigned long currentTime_, float beatLength_) {
-  if(playing) {
-    for(uint8_t i = 0; i < length; i++) {
-      step[i].update(currentTime_, beatLength_);
-    }
+  for(uint8_t i = 0; i < length; i++) {
+    step[i].update(currentTime_, beatLength_);
   }
 }
 
@@ -69,7 +61,5 @@ void Pattern::beatTick(unsigned long currentTime_) {
   if(currentStep >= length) {
     currentStep = 0;
   }
-  if(playing) {
-    step[currentStep].play(currentTime_);
-  }
+  step[currentStep].play(currentTime_);
 }

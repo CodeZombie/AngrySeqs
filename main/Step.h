@@ -21,6 +21,7 @@ void midiAllNotesOff();
 class Step {
   private:
     uint8_t note; //http://www.electronics.dit.ie/staff/tscarff/Music_technology/midi/midi_note_numbers_for_octaves.htm
+    int16_t previousNote;
     uint8_t velocity; //0-127
     uint8_t length; //used as follows: (4/length). A length value of 1 = 4 beats. length value of 4 = 1 beat. length value of 8 = half a beat, etc.
     bool playing;

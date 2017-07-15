@@ -26,9 +26,8 @@ class Pattern {
     uint8_t getLength();
     uint8_t getSwing();
     Step* getStep(uint8_t stepID_);
-    bool isPlaying();
+    void setStep(uint8_t step_);
     void reset();
-    void play();
     void stop();
     void update(unsigned long currentTime_, float beatLength_);
     void beatTick(unsigned long currentTime_); //called when one beat has passed.
