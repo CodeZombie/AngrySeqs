@@ -2,6 +2,7 @@
 #define Sequencer_h
 
 #include "Pattern.h"
+#include "Midi.h"
 
 #if ARDUINO >= 100
   #include "Arduino.h"
@@ -17,11 +18,12 @@ class Sequencer {
     uint16_t tempo;
     bool playing;
     float beatLength;
-    unsigned long beatCount;
     Pattern pattern[8];
     int8_t activePattern[8];
-    unsigned long timeAccumulator;
-    unsigned long ppqnAccumulator;
+    Midi midiManager;
+    float outputClockAccumulator;
+    float sixteenthAccumulator;
+    uint16_t sixteenthCount;
   public:
     Sequencer(uint16_t tempo_);
     void setTempo(uint16_t tempo_);

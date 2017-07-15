@@ -2,30 +2,30 @@
 #include "Pattern.h"
 
 Pattern::Pattern() {
-  length = 8;
+  size = 8; //in beats, not sixteenths.
   swing = 0;
-  currentStep = 0;
+  currentSixteenth = 0;
 }
 
-void Pattern::randomize() {
-  randomSeed(millis());
-  for(uint8_t i = 0; i < length; i++) {
-    step[i].setNote(random(32,64));
+void Pattern::randomize(uint16_t seed_) {
+  randomSeed(seed_);
+  for(uint8_t i = 0; i < size; i++) {
+    step[i].setPitch(random(16,64));
     step[i].setVelocity(random(0,127));
-    step[i].setLength(random(1,64));
+    step[i].setLength(random(1,16));
   }
 }
 
-void Pattern::setLength(uint8_t length_) {
-  length = length_;
+void Pattern::setSize(uint8_t size_) {
+  size = size_;
 }
 
 void Pattern::setSwing(uint8_t swing_) {
   swing = swing_;
 }
 
-uint8_t Pattern::getLength() {
-  return length;
+uint8_t Pattern::getSize() {
+  return size;
 }
 
 uint8_t Pattern::getSwing() {
@@ -37,29 +37,30 @@ Step* Pattern::getStep(uint8_t stepID_) {
 }
 
 void Pattern::setStep(uint8_t step_) {
-  currentStep = step_;
+  if(step_ < size) {
+    currentSixteenth = step_*16;
+  }else{
+    //throw error
+  }
 }
 
 void Pattern::reset() {
-  currentStep = 0;
+  currentSixteenth = 0;
 }
 
-void Pattern::stop() {
-  for(uint8_t i; i < length; i++) {
-    step[i].stop(); //stop playing every note.
+void Pattern::stop(Midi* midiManager_) {
+  for(uint8_t i; i < size; i++) {
+    step[i].stop(midiManager_); //stop playing every note.
   }
 }
 
-void Pattern::update(unsigned long currentTime_, float beatLength_) {
-  for(uint8_t i = 0; i < length; i++) {
-    step[i].update(currentTime_, beatLength_);
+void Pattern::sixteenthTick(Midi* midiManager_) {
+  if(currentSixteenth % 16 == 0){//if exactly one notelength has passed.
+    step[(int)floor(currentSixteenth / 16)].play(midiManager_);//play the note in this spot
   }
-}
 
-void Pattern::beatTick(unsigned long currentTime_) {
-  currentStep++;
-  if(currentStep >= length) {
-    currentStep = 0;
+  currentSixteenth++;
+  if(currentSixteenth >= size*16) {
+    currentSixteenth = 0;
   }
-  step[currentStep].play(currentTime_);
 }
