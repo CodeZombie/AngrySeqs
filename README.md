@@ -11,5 +11,6 @@ Patterns can be built from scratch by the user, or generated randomly by the seq
 * Can hold 16 patterns simultaneously
 * Play multiple patterns at once
 * Generate random sequences
+* Each note can have a dynamically set pitch, length and velocity
 * Randomize any parameter of any sequence
 * Midi-output for music hardware, and usb-serial midi output for [Hairless Midi](https://projectgus.github.io/hairless-midiserial/)
